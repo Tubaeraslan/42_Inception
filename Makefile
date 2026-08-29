@@ -4,8 +4,7 @@ COMPOSE=docker compose -f ./srcs/docker-compose.yml
 
 
 all:
-	@mkdir -p /home/teraslan/data/mysql
-	@mkdir -p /home/teraslan/data/wordpress
+	@mkdir -p /home/teraslan/data
 	@$(COMPOSE) up -d --build
 
 
