@@ -2,7 +2,9 @@ name: inception
 
 services:
   mariadb:
+    image: mariadb
     build: ./requirements/mariadb
+    image: mariadb
     container_name: mariadb
     env_file:
       - .env
@@ -21,7 +23,9 @@ services:
     restart: unless-stopped
 
   wordpress:
+    image: wordpress
     build: ./requirements/wordpress
+    image: wordpress
     container_name: wordpress
     depends_on:
       - mariadb
@@ -40,7 +44,9 @@ services:
     restart: unless-stopped
 
   nginx:
+    image: nginx
     build: ./requirements/nginx
+    image: nginx
     container_name: nginx
     depends_on:
       - wordpress
@@ -56,7 +62,18 @@ services:
 
 volumes:
   mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/teraslan/data/mariadb
+
   wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/teraslan/data/wordpress
 
 secrets:
   db_password:
