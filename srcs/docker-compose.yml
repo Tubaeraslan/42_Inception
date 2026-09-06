@@ -1,90 +1,132 @@
 name: inception
 
 services:
+
   mariadb:
-    image: mariadb
+
     build: ./requirements/mariadb
+
     image: mariadb
+
     container_name: mariadb
+
     env_file:
       - .env
+
     environment:
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
       MYSQL_ADMIN_PASSWORD_FILE: /run/secrets/db_admin_password
+
     secrets:
       - db_password
       - db_root_password
       - db_admin_password
+
     volumes:
       - mariadb_data:/var/lib/mysql
+
     networks:
       - inception
+
     restart: unless-stopped
 
+
   wordpress:
-    image: wordpress
+
     build: ./requirements/wordpress
+
     image: wordpress
+
     container_name: wordpress
+
     depends_on:
       - mariadb
+
     env_file:
       - .env
+
     environment:
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
       WORDPRESS_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
+
     secrets:
       - db_password
       - wp_admin_password
+
     volumes:
       - wordpress_data:/var/www/html
+
     networks:
       - inception
+
     restart: unless-stopped
+
 
   nginx:
-    image: nginx
+
     build: ./requirements/nginx
+
     image: nginx
+
     container_name: nginx
+
     depends_on:
       - wordpress
+
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
+
     ports:
       - "443:443"
+
     volumes:
       - wordpress_data:/var/www/html
+
     networks:
       - inception
+
     restart: unless-stopped
 
+
 volumes:
+
   mariadb_data:
+
     driver: local
+
     driver_opts:
       type: none
       o: bind
       device: /home/teraslan/data/mariadb
 
   wordpress_data:
+
     driver: local
+
     driver_opts:
       type: none
       o: bind
       device: /home/teraslan/data/wordpress
 
+
 secrets:
+
   db_password:
     file: ../secrets/db_password.txt
+
   db_root_password:
     file: ../secrets/db_root_password.txt
+
   db_admin_password:
     file: ../secrets/db_admin_password.txt
+
   wp_admin_password:
     file: ../secrets/wp_admin_password.txt
 
+
 networks:
+
   inception:
+
     driver: bridge

@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+mkdir -p /run/mysqld
+chown mysql:mysql /run/mysqld
+
 read_secret() {
     local name="$1"
     local file_path="$2"
